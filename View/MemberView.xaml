@@ -1,0 +1,83 @@
+﻿<Page x:Class="MusicBand_Manager.View.MemberView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:viewModel="clr-namespace:MusicBand_Manager.ViewModel"
+      DataContext="{Binding Source={x:Static viewModel:MemberViewModel.Instance}}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBox Margin="15"
+        Grid.Row="0" Grid.Column="1"
+        materialDesign:HintAssist.HelperText="Enter the Member name"
+        materialDesign:HintAssist.Hint="FullName"
+        Text="{Binding NewMemberFullName, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <DatePicker Margin="15"
+        Grid.Row="0" Grid.Column="2"
+        materialDesign:HintAssist.HelperText="Enter the Member arrival date"
+        materialDesign:HintAssist.Hint="Arrival Date"
+        SelectedDate="{Binding NewMemberArrivalDate, UpdateSourceTrigger=PropertyChanged}"/>
+
+
+        <Button Margin="10"
+        Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+        Content="Add" Command="{Binding AddCommand}"/>
+        <DataGrid 
+            Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            HeadersVisibility="All"
+            ItemsSource="{Binding Members}"
+            SelectedItem="{Binding SelectedMember}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" Header="FullName"
+                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                <DataGridTemplateColumn Header="Arrival Date">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding ArrivalDate}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Departure Date">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding DepartureDate, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding DepartureDate, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Actions">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Edit" Margin="5" Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                                <Button Content="Delete" Margin="5" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

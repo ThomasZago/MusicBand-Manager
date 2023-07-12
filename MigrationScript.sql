@@ -37,7 +37,7 @@ CREATE TABLE InstrumentProgression (
     id INTEGER PRIMARY KEY,
     repertoire_id INTEGER NOT NULL,
     instrument TEXT NOT NULL,
-    progression TEXT,
+    progression FLOAT,
     notes TEXT,
     member_id INTEGER,
     FOREIGN KEY (repertoire_id) REFERENCES Repertoire(id),
@@ -67,7 +67,7 @@ CREATE TABLE SetlistSongs (
     id INTEGER PRIMARY KEY,
     setlist_id INTEGER,
     repertoire_id INTEGER,
-    position INTEGER,
+    position INTEGER NOT NULL,
     note TEXT,
     FOREIGN KEY (setlist_id) REFERENCES Setlists(id),
     FOREIGN KEY (repertoire_id) REFERENCES Repertoire(id)

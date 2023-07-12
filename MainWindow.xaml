@@ -34,7 +34,7 @@
                         </StackPanel>
                     </TabItem.Header>
                 </TabItem>
-                <TabItem Tag="RepertoireView">
+                <TabItem Tag="MemberView">
                     <TabItem.Header>
                         <StackPanel Width="auto" Height="auto">
                             <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Account" />
