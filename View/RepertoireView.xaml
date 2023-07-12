@@ -1,0 +1,80 @@
+﻿<Page x:Class="MusicBand_Manager.View.RepertoireView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:viewModel="clr-namespace:MusicBand_Manager.ViewModel"
+      DataContext="{Binding Source={x:Static viewModel:RepertoireViewModel.Instance}}"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:command="http://www.galasoft.ch/mvvmlight">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <TextBox Margin="15"
+        Grid.Row="0" Grid.Column="1"
+        materialDesign:HintAssist.HelperText="Enter the song title"
+        materialDesign:HintAssist.Hint="Title"
+        Text="{Binding NewSongTitle, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBox Margin="15"
+        Grid.Row="0" Grid.Column="2"
+        materialDesign:HintAssist.HelperText="Enter the song style"
+        materialDesign:HintAssist.Hint="Style"
+        Text="{Binding NewSongStyle, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBox Margin="15"
+        Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+        materialDesign:HintAssist.HelperText="Enter the original composer"
+        materialDesign:HintAssist.Hint="Original Composer"
+        Text="{Binding NewSongOriginalComposer, UpdateSourceTrigger=PropertyChanged}"/>
+
+
+        <Button Margin="10"
+        Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+        Content="Add" Command="{Binding AddCommand}"/>
+        <DataGrid 
+            Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            HeadersVisibility="All"
+            ItemsSource="{Binding RepertoireSongs}"
+            SelectedItem="{Binding SelectedSong}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Title}" Header="Title"
+                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                <DataGridTextColumn Binding="{Binding Style}" Header="Style"
+                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                <DataGridTextColumn Binding="{Binding OriginalComposer}" Header="Original Composer"
+                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                <DataGridTextColumn Binding="{Binding Lyrics}" Header="Lyrics"
+                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                <DataGridTemplateColumn Header="Actions">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Edit" Margin="5" Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                                <Button Content="Delete" Margin="5" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>
