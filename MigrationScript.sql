@@ -18,32 +18,25 @@ CREATE TABLE Event (
 -- Create the Member table
 CREATE TABLE Member (
     id INTEGER PRIMARY KEY,
-    name TEXT,
-    arrival_date DATE,
+    fullname TEXT NOT NULL,
+    arrival_date DATE NOT NULL,
     departure_date DATE
 );
 
 -- Create the Repertoire table
 CREATE TABLE Repertoire (
     id INTEGER PRIMARY KEY,
-    title TEXT,
-    style TEXT,
-    original_composer TEXT
-);
-
--- Create the Lyrics table
-CREATE TABLE Lyrics (
-    id INTEGER PRIMARY KEY,
-    repertoire_id INTEGER,
-    lyrics TEXT,
-    FOREIGN KEY (repertoire_id) REFERENCES Repertoire(id)
+    title TEXT NOT NULL,
+    style TEXT NOT NULL,
+    original_composer TEXT NOT NULL,
+    lyrics TEXT
 );
 
 -- Create the InstrumentProgression table
 CREATE TABLE InstrumentProgression (
     id INTEGER PRIMARY KEY,
-    repertoire_id INTEGER,
-    instrument TEXT,
+    repertoire_id INTEGER NOT NULL,
+    instrument TEXT NOT NULL,
     progression TEXT,
     notes TEXT,
     member_id INTEGER,

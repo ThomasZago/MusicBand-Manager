@@ -50,7 +50,7 @@ namespace MusicBand_Manager.DAO
                 {
                     command.CommandText = @"
                         UPDATE Repertoire
-                        SET Title = @Title, Style = @Style, Original_Composer = @OriginalComposer
+                        SET Title = @Title, Style = @Style, Original_Composer = @OriginalComposer, Lyrics = @Lyrics
                         WHERE Id = @Id;
                     ";
 
@@ -58,6 +58,7 @@ namespace MusicBand_Manager.DAO
                     command.Parameters.AddWithValue("@Title", repertoireSong.Title);
                     command.Parameters.AddWithValue("@Style", repertoireSong.Style);
                     command.Parameters.AddWithValue("@OriginalComposer", repertoireSong.OriginalComposer);
+                    command.Parameters.AddWithValue("@Lyrics", repertoireSong.Lyrics);
 
                     command.ExecuteNonQuery();
                 }
@@ -75,7 +76,7 @@ namespace MusicBand_Manager.DAO
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = @"
-                        SELECT Id, Title, Style, Original_Composer
+                        SELECT Id, Title, Style, Original_Composer, Lyrics
                         FROM Repertoire;
                     ";
 
@@ -88,7 +89,8 @@ namespace MusicBand_Manager.DAO
                                 Id = reader.GetInt32(0),
                                 Title = reader.GetString(1),
                                 Style = reader.GetString(2),
-                                OriginalComposer = reader.GetString(3)
+                                OriginalComposer = reader.GetString(3),
+                                Lyrics = reader.GetString(4)
                             };
 
                             repertoireSongs.Add(repertoireSong);

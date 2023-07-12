@@ -3,10 +3,65 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:MusicBand_Manager"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Frame x:Name="mainFrame"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <materialDesign:Card Grid.Column="0" Margin="10,10">
+            <TabControl Width="Auto"
+                    VerticalContentAlignment="Stretch" HorizontalAlignment="Right"
+                    materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                    Style="{StaticResource MaterialDesignNavigationRailTabControl}"
+                    SelectionChanged="TabControl_SelectionChanged">
+                <TabItem Tag="RepertoireView">
+                    <TabItem.Header>
+                        <StackPanel Width="auto" Height="auto">
+                            <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="MusicNote" />
+                            <TextBlock HorizontalAlignment="Center" Text="Repertoire" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Tag="RepertoireView">
+                    <TabItem.Header>
+                        <StackPanel Width="auto" Height="auto">
+                            <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="MusicNote" />
+                            <TextBlock HorizontalAlignment="Center" Text="Setlist" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Tag="RepertoireView">
+                    <TabItem.Header>
+                        <StackPanel Width="auto" Height="auto">
+                            <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Account" />
+                            <TextBlock HorizontalAlignment="Center" Text="Members" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Tag="RepertoireView">
+                    <TabItem.Header>
+                        <StackPanel Width="auto" Height="auto">
+                            <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Folder" />
+                            <TextBlock HorizontalAlignment="Center" Text="Materials" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Tag="RepertoireView">
+                    <TabItem.Header>
+                        <StackPanel Width="auto" Height="auto">
+                            <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Calendar" />
+                            <TextBlock HorizontalAlignment="Center" Text="Calendar" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+            </TabControl>
+        </materialDesign:Card>
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <Frame x:Name="mainFrame"/>
+        </ScrollViewer>
     </Grid>
 </Window>
