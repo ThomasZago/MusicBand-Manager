@@ -10,9 +10,12 @@ namespace MusicBand_Manager.DAO
 {
     public class MemberSQLiteDAO
     {
+        private static Dictionary<int, Member> memberCache { get; set; }
+
         public MemberSQLiteDAO()
         {
             SQLiteDAO.InitializeDatabase();
+            memberCache = new Dictionary<int, Member>();
         }
 
         public int AddMember(Member member)
@@ -37,8 +40,8 @@ namespace MusicBand_Manager.DAO
                     insertedId = Convert.ToInt32(command.ExecuteScalar());
                 }
             }
-
-            return insertedId;
+            member.Id = insertedId;
+            return SearchOrUpdateCacheMember(member).Id;
         }
 
         public void UpdateMember(Member member)
@@ -61,8 +64,25 @@ namespace MusicBand_Manager.DAO
                     command.Parameters.AddWithValue("@DepartureDate", member.DepartureDate);
 
                     command.ExecuteNonQuery();
+                    SearchOrUpdateCacheMember(member);
                 }
             }
+        }
+
+        private Member SearchOrUpdateCacheMember(Member member)
+        {
+            if (memberCache.ContainsKey(member.Id)) 
+            {
+                memberCache[member.Id].FullName = member.FullName;
+                memberCache[member.Id].ArrivalDate = member.ArrivalDate;
+                memberCache[member.Id].DepartureDate = member.DepartureDate;
+            }
+            else
+            {
+                memberCache.Add(member.Id, member);
+            }
+            return memberCache[member.Id];
+
         }
 
         public List<Member> GetAllMembers()
@@ -92,7 +112,7 @@ namespace MusicBand_Manager.DAO
                                 DepartureDate = reader.IsDBNull(3) ? null : reader.GetDateTime(3)
                             };
 
-                            members.Add(member);
+                            members.Add(SearchOrUpdateCacheMember(member));
                         }
                     }
                 }
@@ -149,11 +169,53 @@ namespace MusicBand_Manager.DAO
             ";
 
                     command.ExecuteNonQuery();
+                    memberCache.Remove(member.Id);
                 }
             }
 
             return true; // Member deleted successfully
         }
 
+        public Member GetMemberById(int memberId)
+        {
+            if (memberCache.TryGetValue(memberId, out var cachedMember))
+            {
+                return cachedMember;
+            }
+
+            Member member = null;
+
+            using (var connection = SQLiteDAO.GetConnection())
+            {
+                connection.Open();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = @"
+                SELECT Id, FullName, Arrival_Date, Departure_Date
+                FROM Member
+                WHERE Id = @Id;
+            ";
+
+                    command.Parameters.AddWithValue("@Id", memberId);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            member = new Member
+                            {
+                                Id = reader.GetInt32(0),
+                                FullName = reader.GetString(1),
+                                ArrivalDate = reader.GetDateTime(2),
+                                DepartureDate = reader.IsDBNull(3) ? null : reader.GetDateTime(3)
+                            };
+                        }
+                    }
+                }
+            }
+
+            return SearchOrUpdateCacheMember(member);
+        }
     }
 }

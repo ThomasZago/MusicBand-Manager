@@ -39,6 +39,7 @@ CREATE TABLE InstrumentProgression (
     instrument TEXT NOT NULL,
     progression FLOAT,
     notes TEXT,
+    tutolink TEXT,
     member_id INTEGER,
     FOREIGN KEY (repertoire_id) REFERENCES Repertoire(id),
     FOREIGN KEY (member_id) REFERENCES Member(id)

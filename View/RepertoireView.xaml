@@ -41,38 +41,114 @@
         <Button Margin="10"
         Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
         Content="Add" Command="{Binding AddCommand}"/>
-        <DataGrid 
-            Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
-            AutoGenerateColumns="False"
-            CanUserAddRows="False"
-            HeadersVisibility="All"
-            ItemsSource="{Binding RepertoireSongs}"
-            SelectedItem="{Binding SelectedSong}">
+        
+        <DataGrid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                  x:Name="MotherDataGrid"
+          AutoGenerateColumns="False"
+          CanUserAddRows="False"
+          HeadersVisibility="All"
+          ItemsSource="{Binding RepertoireSongs}"
+          SelectedItem="{Binding SelectedSong}">
             <DataGrid.Columns>
+                
                 <DataGridTextColumn Binding="{Binding Title}" Header="Title"
-                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
-                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                            ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                            EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                 <DataGridTextColumn Binding="{Binding Style}" Header="Style"
-                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
-                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                            ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                            EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                 <DataGridTextColumn Binding="{Binding OriginalComposer}" Header="Original Composer"
-                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
-                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                            ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                            EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                 <DataGridTextColumn Binding="{Binding Lyrics}" Header="Lyrics"
-                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
-                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                            ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                            EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                 <DataGridTemplateColumn Header="Actions">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Button Content="Edit" Margin="5" Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
                                 <Button Content="Delete" Margin="5" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                        CommandParameter="{Binding}"/>
+                                CommandParameter="{Binding}"/>
+                                <Button Content="Add InstrumentProgression" Margin="5" Command="{Binding DataContext.AddInstrumentProgressionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                CommandParameter="{Binding}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <DataGrid ItemsSource="{Binding InstrumentProgressions}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      HeadersVisibility="All">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Instrument}" Header="Instrument"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                        EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                            <DataGridTextColumn Binding="{Binding Progression}" Header="Progression"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                        EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                            <DataGridTextColumn Binding="{Binding Notes}" Header="Notes"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                        EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                            <DataGridTemplateColumn Header="Member">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding DataContext.Members, ElementName=MotherDataGrid}"
+                                          SelectedItem="{Binding Member , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          DisplayMemberPath="FullName"
+                                          IsEditable="True" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="TutoLink">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding TutoLink}">
+                                            <TextBlock.Resources>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="Blue" />
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Cursor" Value="Hand" />
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Resources>
+                                            <TextBlock.InputBindings>
+                                                <MouseBinding MouseAction="RightClick" Command="{Binding DataContext.OpenLinkCommand, ElementName=MotherDataGrid}" CommandParameter="{Binding TutoLink}" />
+                                            </TextBlock.InputBindings>
+                                            <TextBlock.ToolTip>
+                                                <ToolTip Content="{Binding TutoLink}" />
+                                            </TextBlock.ToolTip>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding TutoLink, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Actions">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="Edit" Margin="5" Command="{Binding DataContext.EditInstrumentProgressionCommand, ElementName=MotherDataGrid}" CommandParameter="{Binding}"/>
+                                            <Button Content="Delete" Margin="5" Command="{Binding DataContext.DeleteInstrumentProgressionCommand, ElementName=MotherDataGrid}" CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
         </DataGrid>
+
     </Grid>
 </Page>

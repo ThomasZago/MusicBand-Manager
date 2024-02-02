@@ -13,6 +13,7 @@ namespace MusicBand_Manager.Model
         public string Title { get; set; }
         public string Style { get; set; }
         public string OriginalComposer { get; set; }
-        public string Lyrics { get; set; }
+        public string? Lyrics { get; set; }
+        public List<InstrumentProgression> InstrumentProgressions { get; set; }
     }
 }

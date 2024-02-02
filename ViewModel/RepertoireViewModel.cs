@@ -5,6 +5,9 @@ using MusicBand_Manager.Model;
 using MusicBand_Manager.DAO;
 using MusicBand_Manager.Tool;
 using System.Windows.Controls;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System;
 
 namespace MusicBand_Manager.ViewModel
 {
@@ -12,6 +15,7 @@ namespace MusicBand_Manager.ViewModel
     {
         private static RepertoireViewModel _instance;
         private readonly RepertoireSQLiteDAO _repertoireSQLiteDAO;
+        private readonly MemberSQLiteDAO _memberSQLiteDAO;
         private RepertoireSong _selectedSong;
         private RepertoireSong _uneditedSong;
 
@@ -25,8 +29,6 @@ namespace MusicBand_Manager.ViewModel
                 return _instance;
             }
         }
-
-        public ObservableCollection<RepertoireSong> RepertoireSongs { get; set; }
 
         public RepertoireSong SelectedSong
         {
@@ -98,15 +100,106 @@ namespace MusicBand_Manager.ViewModel
             }
         }
 
+        public ObservableCollection<RepertoireSong> RepertoireSongs { get; set; }
+        public ObservableCollection<Member> Members { get; set; }
+        public InstrumentProgression SelectedInstrumentProgression { get; set; }
+        public ICommand AddInstrumentProgressionCommand { get; private set; }
+        public ICommand EditInstrumentProgressionCommand { get; private set; }
+        public ICommand DeleteInstrumentProgressionCommand { get; private set; }
+        public ICommand OpenLinkCommand { get; private set; }
+
+
+        private void HandleLinkClick(object sender, MouseButtonEventArgs e)
+        {
+            var link = ((TextBlock)sender).Text;
+            // Invoke the OpenLinkCommand with the link as the command parameter
+            OpenLinkCommand?.Execute(link);
+        }
+
+
+        private void OpenLinkInBrowser(string url)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur
+                Console.WriteLine($"Failed to open link: {ex.Message}");
+            }
+        }
+
+
+
+        private bool CanAddInstrumentProgression()
+        {
+            return SelectedSong != null;
+        }
+
+        private bool CanEditInstrumentProgression(InstrumentProgression instrumentProgression)
+        {
+            return SelectedSong != null && instrumentProgression != null;
+        }
+
+        private bool CanDeleteInstrumentProgression(InstrumentProgression instrumentProgression)
+        {
+            return SelectedSong != null && instrumentProgression != null;
+        }
+
 
         private RepertoireViewModel()
         {
             _repertoireSQLiteDAO = new RepertoireSQLiteDAO();
+            _memberSQLiteDAO = new MemberSQLiteDAO();
             RepertoireSongs = new ObservableCollection<RepertoireSong>(_repertoireSQLiteDAO.GetAllRepertoireSongs());
-
+            Members = new ObservableCollection<Member>(_memberSQLiteDAO.GetAllMembers());
             AddCommand = new RelayCommand((o) => AddSong(), (o) => CanAddSong());
             EditCommand = new RelayCommand((o) => EditSong(), (o) => CanEditSong());
             DeleteCommand = new RelayCommand((o) => DeleteSong(), (o) => CanDeleteSong());
+            AddInstrumentProgressionCommand = new RelayCommand((o) => AddInstrumentProgression(), (o) => CanAddInstrumentProgression());
+            EditInstrumentProgressionCommand = new RelayCommand((o) => EditInstrumentProgression(o as InstrumentProgression), (o) => CanEditInstrumentProgression(o as InstrumentProgression));
+            DeleteInstrumentProgressionCommand = new RelayCommand((o) => DeleteInstrumentProgression(o as InstrumentProgression), (o) => CanDeleteInstrumentProgression(o as InstrumentProgression));
+            OpenLinkCommand = new RelayCommand((o) => OpenLinkInBrowser(o as String));
+        }
+
+        private void AddInstrumentProgression()
+        {
+            if (SelectedSong != null)
+            {
+                var newInstrumentProgression = new InstrumentProgression()
+                {
+                    Instrument = "LambdaInstrument"
+                };
+                SelectedSong.InstrumentProgressions.Add(newInstrumentProgression);
+
+                // Add instrument progression to the database
+                _repertoireSQLiteDAO.AddInstrumentProgression(SelectedSong.Id, newInstrumentProgression);
+            }
+        }
+
+        private void EditInstrumentProgression(InstrumentProgression instrumentProgression)
+        {
+            if (SelectedSong != null && instrumentProgression != null)
+            {
+                // Update instrument progression in the database
+                _repertoireSQLiteDAO.EditInstrumentProgression(SelectedSong.Id, instrumentProgression);
+            }
+        }
+
+        private void DeleteInstrumentProgression(InstrumentProgression instrumentProgression)
+        {
+            if (SelectedSong != null && instrumentProgression != null)
+            {
+                SelectedSong.InstrumentProgressions.Remove(instrumentProgression);
+
+                // Delete instrument progression from the database
+                _repertoireSQLiteDAO.DeleteInstrumentProgression(instrumentProgression);
+            }
         }
 
         private void AddSong()
@@ -115,7 +208,8 @@ namespace MusicBand_Manager.ViewModel
             {
                 Title = NewSongTitle,
                 Style = NewSongStyle,
-                OriginalComposer = NewSongOriginalComposer
+                OriginalComposer = NewSongOriginalComposer,
+                InstrumentProgressions = new List<InstrumentProgression>()
             };
 
             RepertoireSongs.Add(newSong);
